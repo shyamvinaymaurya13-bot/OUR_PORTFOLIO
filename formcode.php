@@ -9,6 +9,6 @@ $result = mysqli_query($connection, $insert_query);
 if ($result) {
     echo "Data inserted successfully.window.location.href = 'index.html';";
 } else {
-    echo "Error inserting data: " . mysqli_error($connection);
+    echo "Error inserting data"; 
 }
 ?>
