@@ -1,14 +1,26 @@
 <?php
 $name = $_POST['name'];
-$email = $_POST['email'];   
+$email = $_POST['email'];
 $message = $_POST['message'];
 
 $connection = mysqli_connect("localhost", "root", "", "portfolio");
-$insert_query = "INSERT INTO form (name, email, message) VALUES ('$name', '$email', '$message')";
-$result = mysqli_query($connection, $insert_query);
-if ($result) {
-    echo "Data inserted successfully.window.location.href = 'index.html';";
-} else {
-    echo "Error inserting data"; 
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
 }
-?>
+
+$stmt = mysqli_prepare($connection, "INSERT INTO form (name, email, message) VALUES (?, ?, ?)");
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "sss", $name, $email, $message);
+    mysqli_stmt_execute($stmt);
+    if (mysqli_stmt_affected_rows($stmt) > 0) {
+        header("Location: index.html");
+        exit();
+    } else {
+        echo "Error inserting data: " . mysqli_stmt_error($stmt);
+    }
+    mysqli_stmt_close($stmt);
+} else {
+    echo "Error preparing statement: " . mysqli_error($connection);
+}
+
+mysqli_close($connection);
